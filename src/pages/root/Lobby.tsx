@@ -9,8 +9,7 @@ function Lobby() {
           Lade deinen Freund ein
         </h1>
         <p className="pt-5 text-xl md:text-xl text-slate-300 font-medium tracking-wide">
-          Kopiere den Link und sende es an deinen Freund. Kein Mitspieler
-          vorhanden? Teste dich gegen bots!
+          Kopiere den Link und sende es an einen Freund.
         </p>
       </div>
 

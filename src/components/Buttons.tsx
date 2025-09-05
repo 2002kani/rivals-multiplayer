@@ -1,4 +1,5 @@
-import { Play, Settings, ArrowBigLeft, Copy } from "lucide-react";
+import { Play, Settings, ArrowBigLeft, Copy, Check } from "lucide-react";
+import { useState } from "react";
 
 interface IButtonProps {
   onClick: () => void;
@@ -44,10 +45,32 @@ export function BackBtn({ onClick }: IButtonProps) {
 }
 
 export function SendBtn() {
+  const [checked, setChecked] = useState(false);
   return (
-    <button className="cursor-pointer group relative px-6 bg-gradient-to-r from-blue-500 to-blue-300 hover:from-blue-500 hover:to-blue-300 text-white font-semibold text-lg rounded-r-xl transition-all duration-300  hover:shadow-2xl hover:shadow-slate-500/30 backdrop-blur-sm">
+    <button
+      onClick={() => setChecked(true)}
+      className="cursor-pointer group relative px-6 bg-gradient-to-r from-blue-500 to-blue-300 hover:from-blue-500 hover:to-blue-300 text-white font-semibold text-lg rounded-r-xl transition-all duration-300  hover:shadow-2xl hover:shadow-slate-500/30 backdrop-blur-sm"
+    >
       <div className="flex items-center justify-center gap-3">
-        <Copy className="w-5 h-5" />
+        <span
+          className={`transition-all duration-200 transform ${
+            checked
+              ? "scale-0 opacity-0 rotate-90"
+              : "scale-100 opacity-100 rotate-0"
+          }`}
+        >
+          <Copy className="w-5 h-5" />
+        </span>
+
+        <span
+          className={`absolute transition-all duration-200 transform ${
+            checked
+              ? "scale-100 opacity-100 rotate-0"
+              : "scale-0 opacity-0 -rotate-90"
+          }`}
+        >
+          <Check className="w-6 h-6" />
+        </span>
       </div>
     </button>
   );
