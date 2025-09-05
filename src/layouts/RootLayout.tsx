@@ -3,6 +3,7 @@ import { useLocation } from "react-router";
 
 import { BackBtn } from "@/components/Buttons";
 import Dots from "@/components/Dots";
+import { Toaster } from "sonner";
 
 function RootLayout() {
   const location = useLocation();
@@ -34,6 +35,8 @@ function RootLayout() {
       <div className="relative z-10">
         <Outlet />
       </div>
+
+      <Toaster position="top-right" />
     </div>
   );
 }
