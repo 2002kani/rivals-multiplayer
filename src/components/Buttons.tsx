@@ -44,11 +44,14 @@ export function BackBtn({ onClick }: IButtonProps) {
   );
 }
 
-export function SendBtn() {
+export function SendBtn({ onClick }: IButtonProps) {
   const [checked, setChecked] = useState(false);
   return (
     <button
-      onClick={() => setChecked(true)}
+      onClick={() => {
+        setChecked(true);
+        onClick();
+      }}
       className="cursor-pointer group relative px-6 bg-gradient-to-r from-blue-500 to-blue-300 hover:from-blue-500 hover:to-blue-300 text-white font-semibold text-lg rounded-r-xl transition-all duration-300  hover:shadow-2xl hover:shadow-slate-500/30 backdrop-blur-sm"
     >
       <div className="flex items-center justify-center gap-3">

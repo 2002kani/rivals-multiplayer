@@ -14,7 +14,11 @@ function Lobby() {
       </div>
 
       <div className="mt-30">
-        <Card Icon={LinkIcon} text="Link kopieren" />
+        <Card
+          Icon={LinkIcon}
+          text="Link kopieren"
+          link="https://www.npmjs.com/package/socket.io"
+        />
       </div>
     </div>
   );
