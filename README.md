@@ -1,6 +1,6 @@
 # Rivals Multiplayer
 
-Realtime multiplayer game made with Websockets.
+Realtime multiplayer game made with websockets and some frontend stack.
 
 ## How to play
 
