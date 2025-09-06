@@ -32,7 +32,7 @@ const router = createBrowserRouter([
     children: rootRouteChildren,
   },
   {
-    path: "/game",
+    path: "/ingame",
     element: <GameLayout />,
     children: rootGameChildren,
   },

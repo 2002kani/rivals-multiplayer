@@ -1,8 +1,23 @@
-import { Play, Settings, ArrowBigLeft, Copy, Check } from "lucide-react";
+import {
+  Play,
+  Settings,
+  ArrowBigLeft,
+  Copy,
+  Check,
+  Pause,
+  type LucideIcon,
+} from "lucide-react";
 import { useState } from "react";
 
 interface IButtonProps {
   onClick: () => void;
+}
+
+interface ICustomProps {
+  onClick: () => void;
+  label: string;
+  className: string;
+  Icon: LucideIcon;
 }
 
 export function MainBtnLight({ onClick }: IButtonProps) {
@@ -26,6 +41,25 @@ export function MainBtnDark() {
       <div className="flex items-center justify-center gap-3">
         <Settings className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
         <span>Einstellungen</span>
+      </div>
+    </button>
+  );
+}
+
+export function CustomBtnDark({
+  onClick,
+  label,
+  className,
+  Icon,
+}: ICustomProps) {
+  return (
+    <button
+      onClick={onClick}
+      className="cursor-pointer group relative px-8 py-2 bg-slate-800/80 hover:bg-slate-700/80 text-white font-semibold text-md rounded-xl border border-slate-600 hover:border-slate-400 transition-all duration-300 transform hover:scale-102 hover:shadow-2xl hover:shadow-slate-500/30 backdrop-blur-sm min-w-[200px]"
+    >
+      <div className="flex items-center justify-center gap-2">
+        <Icon className={className} />
+        <span>{label}</span>
       </div>
     </button>
   );
@@ -74,6 +108,19 @@ export function SendBtn({ onClick }: IButtonProps) {
         >
           <Check className="w-6 h-6" />
         </span>
+      </div>
+    </button>
+  );
+}
+
+export function PauseBtn({ onClick }: IButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      className="cursor-pointer group relative p-4 bg-slate-800/80 hover:bg-slate-700/80 text-white font-semibold text-lg rounded-lg border border-slate-600 hover:border-slate-400 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-slate-500/30 backdrop-blur-sm"
+    >
+      <div className="flex items-center justify-center gap-3">
+        <Pause className="w-5 h-5" />
       </div>
     </button>
   );
