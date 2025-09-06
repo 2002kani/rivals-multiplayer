@@ -19,6 +19,7 @@ function Card({ text, Icon, link }: ICardProps) {
       await navigator.clipboard.writeText(link);
 
       if (!copied) {
+        // TODO: Make it a seperate component
         toast.custom(
           () => (
             <div className="bg-slate-800/80 gap-2 flex items-center backdrop-blur-md rounded-lg py-3 px-8 border border-white/10 text-center">
