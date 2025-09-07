@@ -115,6 +115,7 @@ function Ingame() {
     setRoundCounter((prev) => prev + 1);
   };
 
+  /*
   const revealHands = () => {
     if (roundCounter == 5) {
       console.log("Alle runden gespielt, fertig!");
@@ -122,6 +123,7 @@ function Ingame() {
       setTimeout(() => resetGame(), 1000);
     }
   };
+  */
 
   const gameBeginningHands = () => {
     const playerBeginningHands = [getRandomCard()];
