@@ -18,7 +18,7 @@ function CustomDialog({ open, setOpen }: ICustomDialogProps) {
   const navigate = useNavigate();
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="flex flex-col bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-2xl text-white shadow-2xl shadow-slate-500/30 transition-all duration-300">
+      <DialogContent className="flex flex-col bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-2xl text-white shadow-2xl shadow-slate-500/30 transition-all duration-100">
         <DialogTitle className="text-xl flex justify-center text-center">
           Was möchtest du tun?
         </DialogTitle>
