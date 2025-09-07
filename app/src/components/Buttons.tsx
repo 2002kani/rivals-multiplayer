@@ -15,8 +15,8 @@ interface IButtonProps {
 
 interface ICustomProps {
   onClick: () => void;
-  label: string;
-  className: string;
+  label?: string;
+  className?: string;
   Icon: LucideIcon;
 }
 
