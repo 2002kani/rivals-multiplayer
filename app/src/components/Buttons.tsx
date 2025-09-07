@@ -35,9 +35,12 @@ export function MainBtnLight({ onClick }: IButtonProps) {
   );
 }
 
-export function MainBtnDark() {
+export function MainBtnDark({ onClick }: IButtonProps) {
   return (
-    <button className="cursor-pointer group relative px-12 py-4 bg-slate-800/80 hover:bg-slate-700/80 text-white font-semibold text-lg rounded-xl border border-slate-600 hover:border-slate-400 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-slate-500/30 backdrop-blur-sm min-w-[200px]">
+    <button
+      onClick={onClick}
+      className="cursor-pointer group relative px-12 py-4 bg-slate-800/80 hover:bg-slate-700/80 text-white font-semibold text-lg rounded-xl border border-slate-600 hover:border-slate-400 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-slate-500/30 backdrop-blur-sm min-w-[200px]"
+    >
       <div className="flex items-center justify-center gap-3">
         <Settings className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
         <span>Einstellungen</span>

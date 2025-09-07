@@ -6,6 +6,7 @@ import Homepage from "@/pages/root/Homepage";
 import Ingame from "@/pages/Ingame";
 import GameLayout from "@/layouts/GameLayout";
 import Lobby from "@/pages/root/Lobby";
+import UnderConstruction from "@/pages/UnderConstruction";
 
 const rootRouteChildren: RouteObject[] = [
   {
@@ -15,6 +16,10 @@ const rootRouteChildren: RouteObject[] = [
   {
     path: "lobby",
     element: <Lobby />,
+  },
+  {
+    path: "settings",
+    element: <UnderConstruction />,
   },
 ];
 

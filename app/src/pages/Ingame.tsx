@@ -4,7 +4,6 @@ import { cards } from "@/constants";
 import { CustomBtnDark } from "@/components/Buttons";
 import { Plus, X } from "lucide-react";
 import { calculateHandValue } from "@/lib/utils";
-import Card from "@/components/Card";
 
 function Ingame() {
   const [playerHand, setPlayerHand] = useState<string[]>([]);
