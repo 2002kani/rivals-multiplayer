@@ -20,7 +20,7 @@ function Homepage() {
 
       <div className="flex flex-col sm:flex-row gap-6 items-center">
         <MainBtnLight onClick={() => navigate("lobby")} />
-        <MainBtnDark />
+        <MainBtnDark onClick={() => navigate("settings")} />
       </div>
 
       <div className="absolute bottom-8 right-8 text-gray-400 text-sm">
