@@ -16,6 +16,9 @@ function Ingame() {
   const [playerValue, setPlayerValue] = useState(0);
   const [enemyValue, setEnemyValue] = useState(0);
 
+  const [playerStands, setPlayerStands] = useState(false);
+  const [enemyStands, setEnemyStands] = useState(false);
+
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [result, setResult] = useState({ type: "", message: "" });
   const [winner, setWinner] = useState<"player" | "enemy" | "both" | null>(
@@ -100,7 +103,9 @@ function Ingame() {
       setWinner("enemy");
       setTimeout(() => resetGame(), 3000);
     } else {
-      setCurrentTurn("enemy");
+      if (!enemyStands) {
+        setCurrentTurn("enemy");
+      }
     }
   };
 
@@ -124,7 +129,9 @@ function Ingame() {
       setWinner("player");
       setTimeout(() => resetGame(), 3000);
     } else {
-      setCurrentTurn("player");
+      if (!playerStands) {
+        setCurrentTurn("player");
+      }
     }
   };
 
@@ -163,20 +170,50 @@ function Ingame() {
     setEnemyValue(0);
     setWinner(null);
     setGameOver(false);
+    setEnemyStands(false);
+    setPlayerStands(false);
     setResult({ type: "", message: "" });
 
     setRoundCounter((prev) => prev + 1);
   };
 
-  /*
-  const revealHands = () => {
-    if (roundCounter == 5) {
-      console.log("Alle runden gespielt, fertig!");
+  const handleStand = (current: "player" | "enemy") => {
+    let newPlayerStands = playerStands;
+    let newEnemyStands = enemyStands;
+
+    if (current === "player") {
+      newPlayerStands = true;
+      setPlayerStands(true);
     } else {
-      setTimeout(() => resetGame(), 1000);
+      newEnemyStands = true;
+      setEnemyStands(true);
+    }
+
+    if (newPlayerStands && newEnemyStands) {
+      let winner: "player" | "enemy" | "both";
+      let message: string;
+
+      if (playerValue === enemyValue) {
+        winner = "both";
+        message = "Unentschieden!";
+      } else if (Math.abs(16 - playerValue) < Math.abs(16 - enemyValue)) {
+        winner = "player";
+        message = "Spieler ist näher an 16!";
+      } else {
+        winner = "enemy";
+        message = "Gegner ist näher an 16!";
+      }
+
+      handleGameOver({ type: winner, message }, winner);
+      setTimeout(() => resetGame(), 3000);
+    } else {
+      if (current === "player" && !newEnemyStands) {
+        setCurrentTurn("enemy");
+      } else if (current === "enemy" && !newPlayerStands) {
+        setCurrentTurn("player");
+      }
     }
   };
-  */
 
   const gameBeginningHands = () => {
     const playerBeginningHands = [getRandomCard()];
@@ -201,6 +238,7 @@ function Ingame() {
             onClick={cardToPlayer}
             label="Karte ziehen"
             className="w-5 h-5"
+            disabled={gameOver}
           />
         )}
         {currentTurn === "enemy" && (
@@ -209,13 +247,15 @@ function Ingame() {
             onClick={cardToEnemy}
             label="Karte ziehen"
             className="w-5 h-5"
+            disabled={gameOver}
           />
         )}
         <CustomBtnDark
           Icon={Hand}
-          onClick={() => undefined}
+          onClick={() => handleStand(currentTurn)}
           label="Stand"
           className="w-5 h-5"
+          disabled={gameOver}
         />
       </div>
 

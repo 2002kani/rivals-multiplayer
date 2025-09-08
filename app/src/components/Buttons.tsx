@@ -18,6 +18,7 @@ interface ICustomProps {
   label?: string;
   className?: string;
   Icon: LucideIcon;
+  disabled?: boolean;
 }
 
 export function MainBtnLight({ onClick }: IButtonProps) {
@@ -54,11 +55,17 @@ export function CustomBtnDark({
   label,
   className,
   Icon,
+  disabled,
 }: ICustomProps) {
   return (
     <button
+      disabled={disabled}
       onClick={onClick}
-      className="cursor-pointer group relative px-8 py-2 bg-slate-800/80 hover:bg-slate-700/80 text-white font-semibold text-md rounded-xl border border-slate-600 hover:border-slate-400 transition-all duration-300 transform hover:scale-102 hover:shadow-2xl hover:shadow-slate-500/30 backdrop-blur-sm min-w-[200px]"
+      className={`group relative px-8 py-2 bg-slate-800/80 text-white font-semibold text-md rounded-xl border border-slate-600 backdrop-blur-sm min-w-[200px] transition-all duration-300 ${
+        disabled
+          ? "opacity-50 cursor-not-allowed"
+          : "cursor-pointer hover:bg-slate-700/80 hover:border-slate-400 transform hover:scale-102 hover:shadow-2xl hover:shadow-slate-500/30"
+      }`}
     >
       <div className="flex items-center justify-center gap-2">
         <Icon className={className} />
@@ -73,11 +80,17 @@ export function CustomBtnLight({
   label,
   className,
   Icon,
+  disabled,
 }: ICustomProps) {
   return (
     <button
+      disabled={disabled}
       onClick={onClick}
-      className="cursor-pointer group relative px-8 py-2 bg-gradient-to-r from-blue-600 to-blue-300 hover:from-blue-500 hover:to-blue-300 text-white font-semibold text-md rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50 min-w-[200px]"
+      className={`group relative px-8 py-2 bg-gradient-to-r from-blue-600 to-blue-300 text-white font-semibold text-md rounded-xl min-w-[200px] transition-all duration-300 ${
+        disabled
+          ? "opacity-50 cursor-not-allowed"
+          : "cursor-pointer hover:from-blue-500 hover:to-blue-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50"
+      }`}
     >
       <div className="flex items-center justify-center gap-2">
         <Icon className={className} />
