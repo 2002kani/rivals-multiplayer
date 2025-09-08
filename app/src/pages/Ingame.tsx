@@ -20,10 +20,8 @@ function Ingame() {
   const [enemyStands, setEnemyStands] = useState(false);
 
   const [gameOver, setGameOver] = useState<boolean>(false);
-  const [result, setResult] = useState({ type: "", message: "" });
-  const [winner, setWinner] = useState<"player" | "enemy" | "both" | null>(
-    null
-  );
+  const [, setResult] = useState({ type: "", message: "" });
+  const [, setWinner] = useState<"player" | "enemy" | "both" | null>(null);
 
   const [roundCounter, setRoundCounter] = useState(1);
   const [currentTurn, setCurrentTurn] = useState<"player" | "enemy">("player");
