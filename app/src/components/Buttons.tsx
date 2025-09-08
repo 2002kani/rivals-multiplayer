@@ -68,6 +68,25 @@ export function CustomBtnDark({
   );
 }
 
+export function CustomBtnLight({
+  onClick,
+  label,
+  className,
+  Icon,
+}: ICustomProps) {
+  return (
+    <button
+      onClick={onClick}
+      className="cursor-pointer group relative px-8 py-2 bg-gradient-to-r from-blue-600 to-blue-300 hover:from-blue-500 hover:to-blue-300 text-white font-semibold text-md rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/50 min-w-[200px]"
+    >
+      <div className="flex items-center justify-center gap-2">
+        <Icon className={className} />
+        <span>{label}</span>
+      </div>
+    </button>
+  );
+}
+
 export function BackBtn({ onClick }: IButtonProps) {
   return (
     <button

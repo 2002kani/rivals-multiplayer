@@ -1,5 +1,5 @@
 interface ICardProps {
-  rank: string | number;
+  rank: string;
 }
 
 function Card({ rank }: ICardProps) {
