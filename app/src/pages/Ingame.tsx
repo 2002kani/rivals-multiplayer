@@ -227,7 +227,11 @@ function Ingame() {
     <div className="flex flex-col items-center mt-20 gap-5 relative">
       <Rounds roundCounter={roundCounter} />
 
-      <EnemyHand enemyHand={enemyHand} enemyValue={enemyValue} />
+      <EnemyHand
+        enemyStand={enemyStands}
+        enemyHand={enemyHand}
+        enemyValue={enemyValue}
+      />
 
       <div className="flex gap-5 mb-10">
         {currentTurn === "player" && (
@@ -257,7 +261,11 @@ function Ingame() {
         />
       </div>
 
-      <PlayerHand playerHand={playerHand} playerValue={playerValue} />
+      <PlayerHand
+        playerStand={playerStands}
+        playerHand={playerHand}
+        playerValue={playerValue}
+      />
     </div>
   );
 }
