@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { io, Socket } from "socket.io-client";
 
-import { cards } from "@/constants";
 import { CustomBtnDark, CustomBtnLight } from "@/components/Buttons";
 import { Check, CirclePlus, Hand, Loader2, X } from "lucide-react";
-import { calculateHandValue } from "@/lib/utils";
 
 import Rounds from "@/components/Rounds";
 import { EnemyHand, PlayerHand } from "@/components/Hands";
@@ -13,214 +12,123 @@ function Ingame() {
   const [playerHand, setPlayerHand] = useState<string[]>([]);
   const [enemyHand, setEnemyHand] = useState<string[]>([]);
 
-  const [playerValue, setPlayerValue] = useState(0);
-  const [enemyValue, setEnemyValue] = useState(0);
-
-  const [playerStands, setPlayerStands] = useState(false);
-  const [enemyStands, setEnemyStands] = useState(false);
-
   const [gameOver, setGameOver] = useState<boolean>(false);
-  const [, setResult] = useState({ type: "", message: "" });
   const [, setWinner] = useState<"player" | "enemy" | "both" | null>(null);
 
   const [roundCounter, setRoundCounter] = useState(1);
-  const [currentTurn, setCurrentTurn] = useState<"player" | "enemy">("player");
+  const [, setCurrentTurn] = useState<"player1" | "player2">("player1");
+  const [myTurn, setMyTurn] = useState(false);
+
+  const [role, setRole] = useState<"player1" | "player2" | null>(null);
+
+  const [playerValue, setPlayerValue] = useState(0);
+  const [enemyValue, setEnemyValue] = useState(0);
+  const [, setPlayerStands] = useState(false);
+  const [, setEnemyStands] = useState(false);
+
+  const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    if (playerValue === 0 && enemyValue === 0) {
-      gameBeginningHands();
-    }
+    socketRef.current = io("http://localhost:3000");
 
-    if (gameOver) {
-      switch (true) {
-        case playerValue === 16 && enemyValue !== 16:
-          setResult({ type: "player", message: "Spieler hat genau 16!" });
-          setWinner("player");
-          break;
-        case enemyValue === 16 && playerValue !== 16:
-          setResult({ type: "enemy", message: "Gegner hat genau 16!" });
-          setWinner("enemy");
-          break;
-        case playerValue > 16:
-          setResult({
-            type: "enemy",
-            message: "Spieler verschätzt! Gegner gewinnt.",
-          });
-          setWinner("enemy");
-          break;
-        case enemyValue > 16:
-          setResult({
-            type: "player",
-            message: "Gegner verschätzt! Spieler gewinnt.",
-          });
-          setWinner("player");
-          break;
-        case playerValue === enemyValue:
-          setResult({ type: "draw", message: "Unentschieden!" });
-          setWinner("both");
-          break;
-        case Math.abs(16 - playerValue) < Math.abs(16 - enemyValue):
-          setResult({ type: "player", message: "Spieler ist näher an 16!" });
-          setWinner("player");
-          break;
-        case Math.abs(16 - enemyValue) < Math.abs(16 - playerValue):
-          setResult({ type: "enemy", message: "Gegner ist näher an 16!" });
-          setWinner("enemy");
-          break;
-        default:
-          break;
-      }
-    }
-  }, [playerHand, enemyHand, gameOver]);
+    socketRef.current.on("role", (assignedRole: "player1" | "player2") => {
+      setRole(assignedRole);
+      console.log("My role: ", assignedRole);
+    });
 
-  const getRandomCard = () => {
-    const randomNumber = Math.floor(Math.random() * cards.length);
-    const randomCard = cards[randomNumber];
+    socketRef.current.on("gameUpdate", (gameData) => {
+      setPlayerHand(gameData.myHand);
+      setPlayerValue(gameData.myHandValue);
+      setPlayerStands(gameData.myStand);
+      setEnemyHand(gameData.enemyHand);
+      setEnemyValue(gameData.enemyHandValue);
+      setEnemyStands(gameData.enemyStand);
+      setCurrentTurn(gameData.currentTurn);
 
-    console.log("Random card: ", randomCard);
-    return randomCard;
-  };
+      // Prüfen ob ich dran bin
+      setMyTurn(gameData.currentTurn === gameData.myRole && !gameData.myStand);
 
-  const cardToPlayer = () => {
-    const newHand = [...playerHand, getRandomCard()];
-    setPlayerHand(newHand);
+      console.log("Game update:", gameData);
+    });
 
-    const newPlayerValue = calculateHandValue(newHand);
-    setPlayerValue(newPlayerValue);
+    // Game Over vom Server
+    socketRef.current.on("gameOver", (data) => {
+      console.log("Game over:", data);
+      setGameOver(true);
 
-    console.log("Player value: ", newPlayerValue);
-
-    if (newPlayerValue > 16) {
-      handleGameOver(
-        {
-          type: "player",
-          message: "Schade, du hast dich leider verschätzt.",
-        },
-        "enemy"
-      );
-      setWinner("enemy");
-      setTimeout(() => resetGame(), 3000);
-    } else {
-      if (!enemyStands) {
-        setCurrentTurn("enemy");
-      }
-    }
-  };
-
-  const cardToEnemy = () => {
-    const newHand = [...enemyHand, getRandomCard()];
-    setEnemyHand(newHand);
-
-    const newEnemyValue = calculateHandValue(newHand);
-    setEnemyValue(newEnemyValue);
-
-    console.log("Enemy value: ", newEnemyValue);
-
-    if (newEnemyValue > 16) {
-      handleGameOver(
-        {
-          type: "enemy",
-          message: "Schade, du hast dich leider verschätzt.",
-        },
-        "player"
-      );
-      setWinner("player");
-      setTimeout(() => resetGame(), 3000);
-    } else {
-      if (!playerStands) {
-        setCurrentTurn("player");
-      }
-    }
-  };
-
-  const handleGameOver = (
-    result: { type: string; message: string },
-    winner: "player" | "enemy" | "both"
-  ) => {
-    setGameOver(true);
-    setResult(result);
-    setWinner(winner);
-
-    toast.custom(
-      () => (
-        <div className="bg-slate-800/80 gap-2 flex items-center backdrop-blur-md rounded-lg py-3 px-8 border border-white/10 text-center">
-          {winner === "player" ? (
-            <Check className="h-6 w-6" color="green" />
-          ) : (
-            <X className="h-6 w-6" color="red" />
-          )}
-          <p className="text-white">
-            {winner === "both" ? "Unentschieden!" : `${winner} gewinnt!`}
-          </p>
-          <Loader2 className="animate-spin h-6 w-6 text-white" />
-        </div>
-      ),
-      {
-        duration: 2900,
-      }
-    );
-  };
-
-  const resetGame = () => {
-    setPlayerHand([]);
-    setPlayerValue(0);
-    setEnemyHand([]);
-    setEnemyValue(0);
-    setWinner(null);
-    setGameOver(false);
-    setEnemyStands(false);
-    setPlayerStands(false);
-    setResult({ type: "", message: "" });
-
-    setRoundCounter((prev) => prev + 1);
-  };
-
-  const handleStand = (current: "player" | "enemy") => {
-    let newPlayerStands = playerStands;
-    let newEnemyStands = enemyStands;
-
-    if (current === "player") {
-      newPlayerStands = true;
-      setPlayerStands(true);
-    } else {
-      newEnemyStands = true;
-      setEnemyStands(true);
-    }
-
-    if (newPlayerStands && newEnemyStands) {
-      let winner: "player" | "enemy" | "both";
-      let message: string;
-
-      if (playerValue === enemyValue) {
-        winner = "both";
-        message = "Unentschieden!";
-      } else if (Math.abs(16 - playerValue) < Math.abs(16 - enemyValue)) {
-        winner = "player";
-        message = "Spieler ist näher an 16!";
+      // Winner bestimmen basierend auf meiner Rolle
+      let displayWinner: "player" | "enemy" | "both";
+      if (data.winner === role) {
+        displayWinner = "player";
       } else {
-        winner = "enemy";
-        message = "Gegner ist näher an 16!";
+        displayWinner = "enemy";
       }
 
-      handleGameOver({ type: winner, message }, winner);
-      setTimeout(() => resetGame(), 3000);
-    } else {
-      if (current === "player" && !newEnemyStands) {
-        setCurrentTurn("enemy");
-      } else if (current === "enemy" && !newPlayerStands) {
-        setCurrentTurn("player");
-      }
-    }
+      setWinner(displayWinner);
+
+      // Toast anzeigen
+      toast.custom(
+        () => (
+          <div className="bg-slate-800/80 gap-2 flex items-center backdrop-blur-md rounded-lg py-3 px-8 border border-white/10 text-center">
+            {displayWinner === "player" ? (
+              <Check className="h-6 w-6" color="green" />
+            ) : (
+              <X className="h-6 w-6" color="red" />
+            )}
+            <p className="text-white">
+              {displayWinner === "both"
+                ? "Unentschieden!"
+                : `${
+                    displayWinner === "player"
+                      ? "Du gewinnst!"
+                      : "Du verlierst!"
+                  }`}
+            </p>
+            <Loader2 className="animate-spin h-6 w-6 text-white" />
+          </div>
+        ),
+        {
+          duration: 2900,
+        }
+      );
+
+      // Nach 3 Sekunden neues Spiel
+      setTimeout(() => {
+        setGameOver(false);
+        setWinner(null);
+        setRoundCounter((prev) => prev + 1);
+      }, 3000);
+    });
+
+    // Fehler vom Server
+    socketRef.current.on("error", (message) => {
+      console.error("Server error:", message);
+      toast.error(message);
+    });
+
+    // Spieler disconnected
+    socketRef.current.on("playerDisconnected", () => {
+      toast.error("Der andere Spieler hat das Spiel verlassen");
+      setGameOver(true);
+    });
+
+    return () => {
+      socketRef.current?.disconnect();
+    };
+  }, [role]);
+
+  const drawCard = () => {
+    if (!myTurn || gameOver) return;
+
+    console.log("Drawing card...");
+    socketRef.current?.emit("drawCard");
   };
 
-  const gameBeginningHands = () => {
-    const playerBeginningHands = [getRandomCard()];
-    setPlayerHand(playerBeginningHands);
-    setPlayerValue(calculateHandValue(playerBeginningHands));
+  const handleStand = () => {
+    if (!myTurn || gameOver) return;
 
-    const enemyBeginningHands = [getRandomCard()];
-    setEnemyHand(enemyBeginningHands);
-    setEnemyValue(calculateHandValue(enemyBeginningHands));
+    console.log("Standing...");
+    socketRef.current?.emit("stand");
   };
 
   return (
@@ -228,41 +136,31 @@ function Ingame() {
       <Rounds roundCounter={roundCounter} />
 
       <EnemyHand
-        enemyStand={enemyStands}
+        enemyStand={false}
         enemyHand={enemyHand}
         enemyValue={enemyValue}
       />
 
       <div className="flex gap-5 mb-10">
-        {currentTurn === "player" && (
-          <CustomBtnLight
-            Icon={CirclePlus}
-            onClick={cardToPlayer}
-            label="Karte ziehen"
-            className="w-5 h-5"
-            disabled={gameOver}
-          />
-        )}
-        {currentTurn === "enemy" && (
-          <CustomBtnLight
-            Icon={CirclePlus}
-            onClick={cardToEnemy}
-            label="Karte ziehen"
-            className="w-5 h-5"
-            disabled={gameOver}
-          />
-        )}
+        <CustomBtnLight
+          Icon={CirclePlus}
+          onClick={drawCard}
+          label="Karte ziehen"
+          className="w-5 h-5"
+          disabled={!myTurn || gameOver}
+        />
+
         <CustomBtnDark
           Icon={Hand}
-          onClick={() => handleStand(currentTurn)}
+          onClick={handleStand}
           label="Stand"
           className="w-5 h-5"
-          disabled={gameOver}
+          disabled={!myTurn || gameOver}
         />
       </div>
 
       <PlayerHand
-        playerStand={playerStands}
+        playerStand={false}
         playerHand={playerHand}
         playerValue={playerValue}
       />
