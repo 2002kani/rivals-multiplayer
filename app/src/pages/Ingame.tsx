@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { io, Socket } from "socket.io-client";
 
 import { cards } from "@/constants";
 import { CustomBtnDark, CustomBtnLight } from "@/components/Buttons";
 import { Check, CirclePlus, Hand, Loader2, X } from "lucide-react";
-import { calculateHandValue } from "@/lib/utils";
 
 import Rounds from "@/components/Rounds";
 import { EnemyHand, PlayerHand } from "@/components/Hands";
@@ -26,8 +26,41 @@ function Ingame() {
   const [roundCounter, setRoundCounter] = useState(1);
   const [currentTurn, setCurrentTurn] = useState<"player" | "enemy">("player");
 
+  const [myTurn, setMyTurn] = useState(false);
+  const [role, setRole] = useState<"player1" | "player2">();
+
+  const socketRef = useRef<Socket | null>(null);
+
   useEffect(() => {
-    if (playerValue === 0 && enemyValue === 0) {
+    socketRef.current = io("http://localhost:3000");
+
+    socketRef.current.on("role", (assignedRole: "player1" | "player2") => {
+      setRole(assignedRole);
+      console.log("My role: ", assignedRole);
+    });
+
+    socketRef.current.on("gameUpdate", (gameData) => {
+      setPlayerHand(gameData.myHand);
+      setPlayerValue(gameData.myHandValue);
+      setEnemyHand(gameData.enemyHand);
+      setEnemyValue(gameData.enemyHandValue);
+      setEnemyStands(gameData.enemyStand);
+      setCurrentTurn(gameData.currentTurn);
+
+      setMyTurn(gameData.currentTurn === gameData.myRole);
+    });
+
+    // this will asign the roles without errors because of strict mode
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (playerValue === 5 && enemyValue === 5) {
       gameBeginningHands();
     }
 
@@ -73,19 +106,18 @@ function Ingame() {
     }
   }, [playerHand, enemyHand, gameOver]);
 
-  const getRandomCard = () => {
-    const randomNumber = Math.floor(Math.random() * cards.length);
-    const randomCard = cards[randomNumber];
+  const drawCard = () => {
+    if (!myTurn || gameOver) return;
 
-    console.log("Random card: ", randomCard);
-    return randomCard;
+    socketRef.current?.emit("drawCard");
   };
 
+  // TODO: Das hier ungefähr ins backend bekommen für drawCard logik im server
   const cardToPlayer = () => {
     const newHand = [...playerHand, getRandomCard()];
     setPlayerHand(newHand);
 
-    const newPlayerValue = calculateHandValue(newHand);
+    const newPlayerValue = 0;
     setPlayerValue(newPlayerValue);
 
     console.log("Player value: ", newPlayerValue);
@@ -103,32 +135,6 @@ function Ingame() {
     } else {
       if (!enemyStands) {
         setCurrentTurn("enemy");
-      }
-    }
-  };
-
-  const cardToEnemy = () => {
-    const newHand = [...enemyHand, getRandomCard()];
-    setEnemyHand(newHand);
-
-    const newEnemyValue = calculateHandValue(newHand);
-    setEnemyValue(newEnemyValue);
-
-    console.log("Enemy value: ", newEnemyValue);
-
-    if (newEnemyValue > 16) {
-      handleGameOver(
-        {
-          type: "enemy",
-          message: "Schade, du hast dich leider verschätzt.",
-        },
-        "player"
-      );
-      setWinner("player");
-      setTimeout(() => resetGame(), 3000);
-    } else {
-      if (!playerStands) {
-        setCurrentTurn("player");
       }
     }
   };
@@ -216,11 +222,11 @@ function Ingame() {
   const gameBeginningHands = () => {
     const playerBeginningHands = [getRandomCard()];
     setPlayerHand(playerBeginningHands);
-    setPlayerValue(calculateHandValue(playerBeginningHands));
+    setPlayerValue(0);
 
     const enemyBeginningHands = [getRandomCard()];
     setEnemyHand(enemyBeginningHands);
-    setEnemyValue(calculateHandValue(enemyBeginningHands));
+    setEnemyValue(0);
   };
 
   return (
@@ -234,24 +240,14 @@ function Ingame() {
       />
 
       <div className="flex gap-5 mb-10">
-        {currentTurn === "player" && (
-          <CustomBtnLight
-            Icon={CirclePlus}
-            onClick={cardToPlayer}
-            label="Karte ziehen"
-            className="w-5 h-5"
-            disabled={gameOver}
-          />
-        )}
-        {currentTurn === "enemy" && (
-          <CustomBtnLight
-            Icon={CirclePlus}
-            onClick={cardToEnemy}
-            label="Karte ziehen"
-            className="w-5 h-5"
-            disabled={gameOver}
-          />
-        )}
+        <CustomBtnLight
+          Icon={CirclePlus}
+          onClick={drawCard}
+          label="Karte ziehen"
+          className="w-5 h-5"
+          disabled={gameOver}
+        />
+
         <CustomBtnDark
           Icon={Hand}
           onClick={() => handleStand(currentTurn)}
