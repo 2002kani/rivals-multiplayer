@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
-import { cards } from "@/constants";
 import { CustomBtnDark, CustomBtnLight } from "@/components/Buttons";
 import { Check, CirclePlus, Hand, Loader2, X } from "lucide-react";
 
@@ -27,7 +26,7 @@ function Ingame() {
   const [currentTurn, setCurrentTurn] = useState<"player" | "enemy">("player");
 
   const [myTurn, setMyTurn] = useState(false);
-  const [role, setRole] = useState<"player1" | "player2">();
+  const [, setRole] = useState<"player1" | "player2">();
 
   const socketRef = useRef<Socket | null>(null);
 
@@ -112,33 +111,7 @@ function Ingame() {
     socketRef.current?.emit("drawCard");
   };
 
-  // TODO: Das hier ungefähr ins backend bekommen für drawCard logik im server
-  const cardToPlayer = () => {
-    const newHand = [...playerHand, getRandomCard()];
-    setPlayerHand(newHand);
-
-    const newPlayerValue = 0;
-    setPlayerValue(newPlayerValue);
-
-    console.log("Player value: ", newPlayerValue);
-
-    if (newPlayerValue > 16) {
-      handleGameOver(
-        {
-          type: "player",
-          message: "Schade, du hast dich leider verschätzt.",
-        },
-        "enemy"
-      );
-      setWinner("enemy");
-      setTimeout(() => resetGame(), 3000);
-    } else {
-      if (!enemyStands) {
-        setCurrentTurn("enemy");
-      }
-    }
-  };
-
+  // Das hier refactoren (an TODO im backend orientieren)
   const handleGameOver = (
     result: { type: string; message: string },
     winner: "player" | "enemy" | "both"
@@ -167,6 +140,7 @@ function Ingame() {
     );
   };
 
+  // ggf löschen?
   const resetGame = () => {
     setPlayerHand([]);
     setPlayerValue(0);
@@ -219,16 +193,6 @@ function Ingame() {
     }
   };
 
-  const gameBeginningHands = () => {
-    const playerBeginningHands = [getRandomCard()];
-    setPlayerHand(playerBeginningHands);
-    setPlayerValue(0);
-
-    const enemyBeginningHands = [getRandomCard()];
-    setEnemyHand(enemyBeginningHands);
-    setEnemyValue(0);
-  };
-
   return (
     <div className="flex flex-col items-center mt-20 gap-5 relative">
       <Rounds roundCounter={roundCounter} />
@@ -245,7 +209,7 @@ function Ingame() {
           onClick={drawCard}
           label="Karte ziehen"
           className="w-5 h-5"
-          disabled={gameOver}
+          disabled={gameOver || !myTurn}
         />
 
         <CustomBtnDark
@@ -253,7 +217,7 @@ function Ingame() {
           onClick={() => handleStand(currentTurn)}
           label="Stand"
           className="w-5 h-5"
-          disabled={gameOver}
+          disabled={gameOver || !myTurn}
         />
       </div>
 

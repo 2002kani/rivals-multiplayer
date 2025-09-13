@@ -8,3 +8,8 @@ export let gameState = {
     player2: [],
   },
 };
+
+export const switchTurn = () => {
+  gameState.currentTurn =
+    gameState.currentTurn === "player1" ? "player2" : "player1";
+};

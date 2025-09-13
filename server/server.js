@@ -1,7 +1,11 @@
 import { Server } from "socket.io";
 
-import { gameState } from "./models/gameState.js";
+import { gameState, switchTurn } from "./models/gameState.js";
 import { startGame, broadcastGameState } from "./services/GameService.js";
+import { getRandomCard } from "./utils/getRandomCard.js";
+import { calculateHandValue } from "./utils/calculateHandValue.js";
+
+import { END_VALUE } from "./config/constants.js";
 
 const io = new Server(3000, {
   cors: {
@@ -28,6 +32,33 @@ io.on("connection", (socket) => {
 
   socket.on("drawCard", () => {
     const playerRole = socket.id === gameState.player1 ? "player1" : "player2";
+
+    const newCard = [getRandomCard()];
+    gameState.hands[playerRole].push(newCard);
+
+    const handValue = calculateHandValue(gameState.hands[playerRole]);
+
+    if (handValue > END_VALUE) {
+      const winner = playerRole === "player1" ? "player2" : "player1";
+
+      // TODO: handle that in frontend
+      io.emit("gameOver", {
+        winner: winner,
+        reason: "bust",
+        hands: gameState.hands,
+      });
+
+      setTimeout(() => {
+        gameState.hands = { player1: [], player2: [] };
+        gameState.gameStarted = false;
+        gameState.currentTurn = "player1";
+
+        startGame(io);
+      }, 3000);
+    } else {
+      switchTurn();
+      broadcastGameState(io);
+    }
   });
 
   socket.on("disconnect", () => {
