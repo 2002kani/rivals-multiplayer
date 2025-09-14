@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
 import { CustomBtnDark, CustomBtnLight } from "@/components/Buttons";
-import { Check, CirclePlus, Hand, Loader2, X } from "lucide-react";
+import { Check, CircleAlert, CirclePlus, Hand, Loader2, X } from "lucide-react";
 
 import Rounds from "@/components/Rounds";
 import { EnemyHand, PlayerHand } from "@/components/Hands";
 import { toast } from "sonner";
+import { CustomToast } from "@/components/customToasts";
 
 function Ingame() {
   const [playerHand, setPlayerHand] = useState<string[]>([]);
@@ -19,7 +20,6 @@ function Ingame() {
   const [enemyStands, setEnemyStands] = useState(false);
 
   const [gameOver, setGameOver] = useState<boolean>(false);
-  const [, setResult] = useState({ type: "", message: "" });
 
   const [roundCounter, setRoundCounter] = useState(1);
   const [currentTurn, setCurrentTurn] = useState<"player" | "enemy">("player");
@@ -77,7 +77,13 @@ function Ingame() {
       }, 3000);
     });
 
-    // TODO: error handling implementieren
+    socketRef.current.on("gameFull", () => {
+      CustomToast({
+        text: "Spiel ist leider voll!",
+        Icon: CircleAlert,
+        duration: 3000,
+      });
+    });
 
     return () => {
       if (socketRef.current) {

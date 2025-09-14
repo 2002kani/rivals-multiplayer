@@ -1,8 +1,9 @@
+import { useState } from "react";
+
 import type { LucideIcon } from "lucide-react";
 import { SendBtn } from "./Buttons";
-import { toast } from "sonner";
 import { ClipboardCheck } from "lucide-react";
-import { useState } from "react";
+import { CustomToast } from "./customToasts";
 
 interface ICardProps {
   text: string;
@@ -19,18 +20,11 @@ function Card({ text, Icon, link }: ICardProps) {
       await navigator.clipboard.writeText(link);
 
       if (!copied) {
-        // TODO: Make it a seperate component
-        toast.custom(
-          () => (
-            <div className="bg-slate-800/80 gap-2 flex items-center backdrop-blur-md rounded-lg py-3 px-8 border border-white/10 text-center">
-              <ClipboardCheck className="h-5 w-5" color="white" />
-              <p className="text-white">Link kopiert!</p>
-            </div>
-          ),
-          {
-            duration: 1200,
-          }
-        );
+        CustomToast({
+          text: "Link kopiert!",
+          Icon: ClipboardCheck,
+          duration: 1200,
+        });
         setCopied(true);
       }
     } catch (e) {

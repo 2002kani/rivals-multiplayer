@@ -27,7 +27,7 @@ io.on("connection", (socket) => {
 
     startGame(io);
   } else {
-    // TODO: error handling
+    socket.emit("gameFull");
   }
 
   socket.on("drawCard", () => {
@@ -37,6 +37,14 @@ io.on("connection", (socket) => {
     gameState.hands[playerRole].push(newCard);
 
     const handValue = calculateHandValue(gameState.hands[playerRole]);
+
+    // für TODO aus Erinnerungen
+    console.log(
+      `${playerRole}: `,
+      gameState.hands[playerRole],
+      "Hand value: ",
+      handValue
+    );
 
     if (handValue > END_VALUE) {
       const winner = playerRole === "player1" ? "player2" : "player1";
