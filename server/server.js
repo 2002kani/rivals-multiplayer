@@ -33,7 +33,7 @@ io.on("connection", (socket) => {
   socket.on("drawCard", () => {
     const playerRole = socket.id === gameState.player1 ? "player1" : "player2";
 
-    const newCard = [getRandomCard()];
+    const newCard = getRandomCard();
     gameState.hands[playerRole].push(newCard);
 
     const handValue = calculateHandValue(gameState.hands[playerRole]);
@@ -41,9 +41,14 @@ io.on("connection", (socket) => {
     if (handValue > END_VALUE) {
       const winner = playerRole === "player1" ? "player2" : "player1";
 
-      // TODO: handle that in frontend
-      io.emit("gameOver", {
-        winner: winner,
+      io.to(gameState.player1).emit("gameOver", {
+        youWon: winner === "player1",
+        reason: "bust",
+        hands: gameState.hands,
+      });
+
+      io.to(gameState.player2).emit("gameOver", {
+        youWon: winner === "player2",
         reason: "bust",
         hands: gameState.hands,
       });

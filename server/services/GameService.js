@@ -32,6 +32,5 @@ export const startGame = (io) => {
     gameState.gameStarted = true;
 
     broadcastGameState(io);
-    console.log("Game started!");
   }
 };
