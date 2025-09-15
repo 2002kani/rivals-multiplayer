@@ -11,6 +11,10 @@ export const broadcastGameState = (io) => {
       enemyHandValue: calculateHandValue(gameState.hands.player2),
       currentTurn: gameState.currentTurn,
       myRole: "player1",
+      stands: {
+        player1: gameState.stands.player1,
+        player2: gameState.stands.player2,
+      },
     });
 
     io.to(gameState.player2).emit("gameUpdate", {
@@ -20,6 +24,10 @@ export const broadcastGameState = (io) => {
       enemyHandValue: calculateHandValue(gameState.hands.player1),
       currentTurn: gameState.currentTurn,
       myRole: "player2",
+      stands: {
+        player1: gameState.stands.player1,
+        player2: gameState.stands.player2,
+      },
     });
   }
 };

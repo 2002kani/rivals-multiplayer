@@ -7,6 +7,10 @@ export let gameState = {
     player1: [],
     player2: [],
   },
+  stands: {
+    player1: false,
+    player2: false,
+  },
 };
 
 export const switchTurn = () => {
