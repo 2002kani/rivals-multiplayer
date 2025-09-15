@@ -48,6 +48,7 @@ io.on("connection", (socket) => {
     );
 
     if (handValue > END_VALUE) {
+      broadcastGameState(io);
       const winner = playerRole === "player1" ? "player2" : "player1";
 
       io.to(gameState.player1).emit("gameOver", {
