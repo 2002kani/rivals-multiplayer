@@ -78,8 +78,6 @@ io.on("connection", (socket) => {
     const playerRole = socket.id === gameState.player1 ? "player1" : "player2";
     gameState.stands[playerRole] = true;
 
-    io.emit("standMessage", "Spieler steht!");
-
     if (gameState.stands.player1 && gameState.stands.player2) {
       const value1 = calculateHandValue(gameState.hands.player1);
       const value2 = calculateHandValue(gameState.hands.player2);
