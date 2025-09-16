@@ -39,14 +39,6 @@ io.on("connection", (socket) => {
 
     const handValue = calculateHandValue(gameState.hands[playerRole]);
 
-    // für TODO aus Erinnerungen
-    console.log(
-      `${playerRole}: `,
-      gameState.hands[playerRole],
-      "Hand value: ",
-      handValue
-    );
-
     if (handValue > END_VALUE) {
       broadcastGameState(io);
       const winner = playerRole === "player1" ? "player2" : "player1";
