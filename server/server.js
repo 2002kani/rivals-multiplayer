@@ -40,7 +40,7 @@ io.on("connection", (socket) => {
     const handValue = calculateHandValue(gameState.hands[playerRole]);
 
     if (handValue > END_VALUE) {
-      broadcastGameState(io);
+      broadcastGameState(io, true);
       const winner = playerRole === "player1" ? "player2" : "player1";
 
       io.to(gameState.player1).emit("gameOver", {
@@ -55,7 +55,7 @@ io.on("connection", (socket) => {
         hands: gameState.hands,
       });
 
-      setTimeout(() => resetGame(io), 3000);
+      setTimeout(() => resetGame(io), 5000);
     } else {
       if (playerRole === "player1" && !gameState.stands.player2) {
         switchTurn();
@@ -81,6 +81,8 @@ io.on("connection", (socket) => {
       else if (value2 > value1) winner = "player2";
       else if (value1 === value2) winner = "both";
 
+      broadcastGameState(io, true); // true if both stand
+
       io.to(gameState.player1).emit("gameOver", {
         youWon: winner === "player1",
         reason: "bothStand",
@@ -95,16 +97,15 @@ io.on("connection", (socket) => {
         draw: winner === "both",
       });
 
-      setTimeout(() => resetGame(io), 3000);
+      setTimeout(() => resetGame(io), 5000);
     } else {
       if (playerRole === "player1" && !gameState.stands.player2) {
         gameState.currentTurn = "player2";
       } else if (playerRole === "player2" && !gameState.stands.player1) {
         gameState.currentTurn = "player1";
       }
+      broadcastGameState(io); // !true if only one stands
     }
-
-    broadcastGameState(io);
   });
 
   socket.on("disconnect", () => {

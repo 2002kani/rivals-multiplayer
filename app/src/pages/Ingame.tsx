@@ -85,14 +85,14 @@ function Ingame() {
           </div>
         ),
         {
-          duration: 2900,
+          duration: 4900,
         }
       );
 
       setTimeout(() => {
         setGameOver(false);
         setRoundCounter((prev) => prev + 1);
-      }, 3000);
+      }, 5000);
     });
 
     socketRef.current.on("gameFull", () => {
