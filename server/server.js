@@ -1,4 +1,5 @@
 import { Server } from "socket.io";
+import dotenv from "dotenv";
 
 import { gameState, switchTurn } from "./models/gameState.js";
 import { startGame, broadcastGameState } from "./services/GameService.js";
@@ -8,9 +9,11 @@ import { resetGame } from "./utils/resetGame.js";
 
 import { END_VALUE } from "./config/constants.js";
 
-const io = new Server(3000, {
+dotenv.config();
+
+const io = new Server(process.env.PORT || 3000, {
   cors: {
-    origin: ["http://localhost:5173"],
+    origin: [process.env.VITE_CREATE_FRONTEND_URL],
   },
 });
 

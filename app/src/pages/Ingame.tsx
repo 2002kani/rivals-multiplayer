@@ -36,8 +36,10 @@ function Ingame() {
 
   const socketRef = useRef<Socket | null>(null);
 
+  const backendUrl = import.meta.env.VITE_CREATE_BACKEND_URL;
+
   useEffect(() => {
-    socketRef.current = io("http://localhost:3000");
+    socketRef.current = io(backendUrl);
 
     socketRef.current.on("role", (assignedRole: "player1" | "player2") => {
       setRole(assignedRole);
