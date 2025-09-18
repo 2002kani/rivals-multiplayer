@@ -1,10 +1,6 @@
 # Rivals Multiplayer
 
-Realtime multiplayer game made with websockets and React.
-
-**Game link:** https://rivals-multiplayer.vercel.app/
-
-**Important:** The game is far from finished and still contains bugs.
+Realtime multiplayer game made with websockets, Nodejs and React.
 
 ## How to play
 
