@@ -13,6 +13,13 @@ In the first game mode, both players draw cards. The one who gets closest to the
 
 <img width="1432" height="797" alt="Bildschirmfoto 2025-09-18 um 12 45 24" src="https://github.com/user-attachments/assets/ff311d01-5cee-4e94-ad58-50e1ac1980f5" />
 
+## Tech stack
+Since its a learning project my focuse was primarly on improving with websockets.
+
+Frontend: React, Typescript, Tailwindcss, shadcn
+Backend: Nodejs, socket.io
+Deployment: Frontend is hosted on Vercel, backend production on render.com as Web Service
+
 ## Suggestions?
 
 Feel free to play this game and open a PR if you have improvements or cool ideas for new stuff.
