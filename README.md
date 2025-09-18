@@ -1,6 +1,6 @@
 # Rivals Multiplayer
 
-Realtime multiplayer game made with websockets, Nodejs and React.
+Realtime multiplayer game made with websockets, Nodejs and React. This Project is still WIP and may contains bugs and unfinished features.
 
 ## How to play
 
