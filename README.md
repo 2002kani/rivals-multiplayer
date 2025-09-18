@@ -17,7 +17,9 @@ In the first game mode, both players draw cards. The one who gets closest to the
 Since its a learning project my focuse was primarly on improving with websockets.
 
 Frontend: React, Typescript, Tailwindcss, shadcn
+
 Backend: Nodejs, socket.io
+
 Deployment: Frontend is hosted on Vercel, backend production on render.com as Web Service
 
 ## Suggestions?
