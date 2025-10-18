@@ -17,7 +17,7 @@ function Lobby() {
         <Card
           Icon={LinkIcon}
           text="Link kopieren"
-          link="https://www.rivalsmultiplayer.com/lobby/f61zO39044d"
+          link="https://rivals-multiplayer-front.vercel.app/lobby/f61zO39044d"
         />
       </div>
     </div>
