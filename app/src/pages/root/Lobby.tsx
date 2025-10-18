@@ -17,7 +17,7 @@ function Lobby() {
         <Card
           Icon={LinkIcon}
           text="Link kopieren"
-          link="https://www.npmjs.com/package/socket.io"
+          link="https://www.rivalsmultiplayer.com/lobby/f61zO39044d"
         />
       </div>
     </div>
